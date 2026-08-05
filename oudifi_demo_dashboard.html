@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1628">
+<title>Oudifi Care — Live Demo</title>
+<style>
+:root{
+  --bg:#0B1628; --panel:#0D1829; --card:#141F35; --sunk:#091321;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+  --ink:#E8EEF5; --soft:#8B9AB0; --dim:#5D6D85; --faint:#4A586E;
+  --teal:#3FC0B4; --amber:#F2994A; --green:#33C48A; --olive:#B9C98E; --violet:#8E7BD8;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --pad:16px; --gap:12px;
+}
+@media(min-width:760px){:root{--pad:22px;--gap:14px}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+
+/* ---------- top ---------- */
+.top{position:sticky;top:0;z-index:30;background:rgba(11,22,40,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)}
+.topin{max-width:1360px;margin:0 auto;padding:12px var(--pad);display:flex;align-items:center;gap:12px}
+.logo{font-weight:700;font-size:15.5px;letter-spacing:-.015em;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pl 2.6s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(51,196,138,.5)}70%{box-shadow:0 0 0 8px rgba(51,196,138,0)}100%{box-shadow:0 0 0 0 rgba(51,196,138,0)}}
+.site{font-size:11px;color:var(--dim);letter-spacing:.1em;font-weight:600;padding-left:12px;
+  border-left:1px solid var(--line2);white-space:nowrap}
+@media(max-width:520px){.site{display:none}}
+.clock{margin-left:auto;text-align:right;font-family:var(--mono);white-space:nowrap}
+.clock b{display:block;font-size:14px;font-weight:600}
+.clock i{display:block;font-style:normal;font-size:9.5px;color:var(--dim);letter-spacing:.11em;margin-top:1px}
+
+/* ---------- shell ---------- */
+.shell{max-width:1360px;margin:0 auto;display:flex;align-items:flex-start}
+.side{display:none}
+@media(min-width:960px){
+  .side{display:block;width:236px;flex:none;position:sticky;top:57px;align-self:flex-start;
+    padding:var(--gap) 0 40px var(--pad);max-height:calc(100vh - 57px);overflow-y:auto}
+}
+.main{flex:1;min-width:0;padding:var(--gap) var(--pad) 60px}
+
+/* sidebar */
+.snav{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px}
+.sgroup+.sgroup{margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}
+.sfloor{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:11px;letter-spacing:.11em;
+  color:var(--faint);font-weight:700}
+.sfloor em{font-style:normal;margin-left:auto;font-family:var(--mono);letter-spacing:0;color:var(--dim);font-size:10.5px}
+.sitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13px;
+  color:var(--soft);cursor:pointer;transition:background .12s,color .12s}
+.sitem:hover{background:#16233A;color:var(--ink)}
+.sitem.on{background:#1B2B47;color:var(--ink);font-weight:600}
+.sitem .n{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--line2);flex:none}
+.sdot.is-hot{background:var(--amber)}
+.sdot.is-ok{background:rgba(51,196,138,.55)}
+.sall{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13px;
+  font-weight:600;cursor:pointer;color:var(--soft)}
+.sall:hover{background:#16233A;color:var(--ink)}
+.sall.on{background:#1B2B47;color:var(--ink)}
+
+/* mobile chips */
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-bottom:var(--gap)}
+.chips::-webkit-scrollbar{display:none}
+@media(min-width:960px){.chips{display:none}}
+.chip{flex:none;font-size:12px;font-weight:600;color:var(--soft);background:var(--card);
+  border:1px solid var(--line);border-radius:20px;padding:7px 13px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#04231F}
+.chip .b{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-left:6px;vertical-align:1px}
+
+/* ---------- shared ---------- */
+.stack>*+*{margin-top:var(--gap)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card>h2{font-size:10px;letter-spacing:.15em;color:var(--faint);font-weight:700;margin-bottom:12px}
+.crumb{font-size:11.5px;color:var(--dim);letter-spacing:.02em}
+.crumb b{color:var(--soft);font-weight:600;cursor:pointer}
+.crumb b:hover{color:var(--ink)}
+.h1{font-size:24px;font-weight:800;letter-spacing:-.025em}
+.h1 small{display:block;font-size:12.5px;font-weight:400;color:var(--dim);letter-spacing:0;margin-top:3px}
+.lab{font-size:10px;letter-spacing:.15em;color:var(--faint);font-weight:700}
+.lab span{color:var(--dim);font-weight:400;letter-spacing:.02em;font-size:11px;margin-left:10px}
+
+.note{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:11px 13px;font-size:12px;color:var(--soft);line-height:1.5}
+.note b{color:var(--ink);font-weight:600}
+.note .i{width:16px;height:16px;border-radius:50%;border:1px solid var(--line2);color:var(--dim);
+  font-size:10px;font-weight:700;display:grid;place-items:center;flex:none;margin-top:2px}
+
+/* stats */
+.sum{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.sum>div{flex:1 1 calc(33.33% - 10px);min-width:0;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:11px 13px}
+@media(min-width:760px){.sum>div{flex:1 1 0}}
+.sum i{display:block;font-style:normal;font-size:9px;letter-spacing:.13em;color:var(--faint);font-weight:600}
+.sum b{display:block;font-family:var(--mono);font-size:20px;font-weight:600;margin-top:4px;letter-spacing:-.03em}
+.sum b.is-hot{color:var(--amber)}
+
+/* alert bar + list */
+.alertbar{background:var(--amber);color:#3A2100;border-radius:14px;padding:14px;
+  display:flex;gap:13px;align-items:center;cursor:pointer;transition:filter .15s}
+.alertbar:hover{filter:brightness(1.05)}
+.alertbar .ring{width:34px;height:34px;border-radius:50%;background:rgba(58,33,0,.16);flex:none;
+  display:grid;place-items:center;font-size:16px;font-weight:800}
+.alertbar .body{flex:1;min-width:0}
+.alertbar .tag{font-size:9.5px;font-weight:800;letter-spacing:.15em;opacity:.7}
+.alertbar .ttl{font-size:16px;font-weight:800;margin:2px 0 3px;letter-spacing:-.01em}
+.alertbar .sub{font-size:12px;opacity:.82;line-height:1.45}
+.alertbar .go{font-size:22px;opacity:.45;flex:none;font-weight:300}
+
+.arow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.arow:first-child{padding-top:0}
+.arow:last-child{border-bottom:0;padding-bottom:0}
+.arow:hover .aw{color:var(--ink)}
+.abadge{font-size:8.5px;font-weight:800;letter-spacing:.11em;border-radius:5px;padding:4px 7px;flex:none;width:74px;text-align:center}
+.abadge.t-fall{background:var(--amber);color:#3A2100}
+.abadge.t-immob{background:rgba(142,123,216,.16);color:var(--violet);border:1px solid rgba(142,123,216,.35)}
+.abadge.t-exit{background:rgba(63,192,180,.14);color:var(--teal);border:1px solid rgba(63,192,180,.32)}
+.abadge.t-sensor{background:rgba(139,154,176,.12);color:var(--soft);border:1px solid var(--line2)}
+.aw{flex:1;min-width:0;font-size:13.5px;font-weight:600;transition:color .12s}
+.aw span{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:2px}
+.aago{font-family:var(--mono);font-size:11px;color:var(--dim);flex:none}
+
+/* floor cards */
+.floors{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.floors>*{flex:1 1 100%;min-width:0}
+@media(min-width:820px){.floors>*{flex:1 1 calc(50% - 7px)}}
+@media(min-width:1180px){.floors>*{flex:1 1 calc(33.33% - 10px)}}
+.fl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.flh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.flh .t{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.flh .k{font-size:10px;letter-spacing:.11em;color:var(--faint);font-weight:700}
+.flsub{font-size:11.5px;color:var(--dim);margin-bottom:12px}
+.wd{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--sunk);
+  border:1px solid var(--line);cursor:pointer;transition:border-color .12s,background .12s}
+.wd+.wd{margin-top:8px}
+.wd:hover{border-color:var(--line2);background:#0D1829}
+.wd.is-hot{border-color:rgba(242,153,74,.5)}
+.wdl{flex:1;min-width:0}
+.wdl .n{font-size:13.5px;font-weight:700}
+.wdl .m{font-size:10.5px;color:var(--dim);margin-top:1px}
+.occ{width:74px;flex:none}
+.occ .bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.occ .fill{height:100%;background:var(--teal);border-radius:3px}
+.occ .fill.is-hot{background:var(--amber)}
+.occ .t{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:4px;text-align:right}
+.wdb{flex:none;margin-left:10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-size:11px;font-weight:800;background:var(--amber);color:#3A2100}
+
+/* bed grid */
+.grid{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.grid>*{flex:1 1 100%;min-width:0}
+@media(min-width:600px){.grid>*{flex:1 1 calc(50% - 7px)}}
+@media(min-width:1080px){.grid>*{flex:1 1 calc(33.33% - 10px)}}
+.bed{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;
+  transition:border-color .15s,background .15s}
+.bed:hover{border-color:var(--line2);background:#182642}
+.bed.is-alert{background:#2C1A08;border-color:var(--amber)}
+.bed.is-watch{border-color:rgba(63,192,180,.32)}
+.bed.is-off{opacity:.6}
+.bed.is-vac{opacity:.45}
+.bed.is-vac .st{color:var(--faint)}
+.bh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px}
+.bh .id{font-weight:700;font-size:14.5px;letter-spacing:-.01em;white-space:nowrap}
+.bh .st{font-size:9.5px;letter-spacing:.11em;color:var(--dim);font-weight:700;white-space:nowrap;padding-left:10px}
+.bed.is-alert .st{color:var(--amber)} .bed.is-watch .st{color:var(--teal)}
+.bv{display:flex;gap:12px}
+.bv>div{flex:1;min-width:0}
+.bv i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.13em;color:var(--faint);font-weight:600}
+.bv b{display:block;font-family:var(--mono);font-size:15px;font-weight:600;color:#C5D2E2;margin-top:2px;letter-spacing:-.02em}
+.bv b s{text-decoration:none;font-size:9.5px;font-weight:400;color:var(--dim);margin-left:2px}
+.bed.is-alert .bv b{color:var(--amber)}
+.bv b.is-due{color:#EAC24F}
+.spark{margin-top:10px;display:block;width:100%;height:18px}
+
+/* detail */
+.back{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--soft);
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 13px;cursor:pointer}
+.back:hover{border-color:var(--line2)}
+.pill{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.13em;border-radius:20px;padding:5px 12px;margin-top:10px}
+.pill.is-alert{background:var(--amber);color:#3A2100}
+.pill.is-ok{background:rgba(51,196,138,.13);color:var(--green);border:1px solid rgba(51,196,138,.28)}
+.pill.is-watch{background:rgba(63,192,180,.13);color:var(--teal);border:1px solid rgba(63,192,180,.28)}
+.vt{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.vt>div{flex:1 1 calc(50% - 7px);min-width:0;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:12px 13px}
+@media(min-width:700px){.vt>div{flex:1 1 0}}
+.vt i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.13em;color:var(--faint);font-weight:600}
+.vt b{display:block;font-family:var(--mono);font-size:21px;font-weight:600;margin-top:5px;letter-spacing:-.03em}
+.vt b s{text-decoration:none;font-size:10.5px;font-weight:400;color:var(--dim);margin-left:2px}
+.vt em{display:block;font-style:normal;font-size:10px;color:var(--dim);margin-top:5px}
+.beta{font-size:7.5px;letter-spacing:.12em;color:var(--faint);border:1px solid var(--line2);border-radius:3px;
+  padding:1px 4px;margin-left:6px;vertical-align:1px;font-weight:700}
+.rp{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.btn{font-size:12.5px;font-weight:700;border:1px solid var(--line2);background:var(--sunk);color:var(--ink);
+  border-radius:10px;padding:9px 15px;cursor:pointer;font-family:inherit}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:#04231F}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:default;filter:none}
+.rpt{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:auto}
+.chartbox{background:var(--sunk);border:1px solid var(--line);border-radius:11px;padding:12px 10px 8px}
+#chart{display:block;width:100%;height:160px}
+@media(min-width:760px){#chart{height:200px}}
+.phlab{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.phlab>div{flex:1 1 100%;border-top:2px solid var(--line2);padding-top:8px;opacity:.35;transition:opacity .35s}
+@media(min-width:600px){.phlab>div{flex:1 1 0}}
+.phlab>div.on{opacity:1}
+.phlab>div:nth-child(1){border-top-color:var(--teal)}
+.phlab>div:nth-child(2){border-top-color:var(--amber)}
+.phlab>div:nth-child(3){border-top-color:var(--teal)}
+.phlab b{display:block;font-size:11.5px;font-weight:700}
+.phlab span{display:block;font-size:10px;color:var(--dim);line-height:1.4;margin-top:3px}
+.cols{display:flex;flex-wrap:wrap;gap:var(--gap);align-items:stretch}
+.cols>*{flex:1 1 100%;min-width:0}
+@media(min-width:860px){.cols>*{flex:1 1 0}}
+.cols>.card{margin:0;display:flex;flex-direction:column}
+.fp{background:var(--sunk);border:1px solid var(--line);border-radius:11px;padding:12px}
+.env{display:flex;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.env>div{flex:1;text-align:center}
+.env i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.13em;color:var(--faint);font-weight:600}
+.env b{display:block;font-family:var(--mono);font-size:16px;font-weight:600;margin-top:3px}
+.log{flex:1}
+.lg{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.lg:first-child{padding-top:0}
+.lg:last-child{border-bottom:0;padding-bottom:0}
+.lg time{font-family:var(--mono);font-size:11px;color:var(--dim);flex:none;width:40px;padding-top:2px}
+.lg .dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:7px;background:var(--dim)}
+.lg.is-hot .dot{background:var(--amber)} .lg.is-ok .dot{background:var(--green)}
+.lg .tx{flex:1;min-width:0;font-size:13px;font-weight:600}
+.lg .tx span{display:block;font-size:11px;color:var(--dim);margin-top:2px;font-weight:400;line-height:1.45}
+
+.foot{padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.65}
+.foot b{color:var(--soft)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="topin">
+  <div class="logo"><span class="pulse"></span>Oudifi Care</div>
+  <div class="site">3 FLOORS · 6 WARDS · 54 BEDS</div>
+  <div class="clock"><b id="clk">02:14</b><i>NIGHT · 5 ON DUTY</i></div>
+</div></div>
+
+<div class="shell">
+  <aside class="side"><nav class="snav" id="snav"></nav></aside>
+  <main class="main">
+    <div class="chips" id="chips"></div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script>
+/* ================= data ================= */
+const STATES=[
+ {st:"asleep",cls:"",resp:[12,16],hr:[56,70]},
+ {st:"asleep",cls:"",resp:[12,16],hr:[56,70]},
+ {st:"asleep",cls:"",resp:[13,17],hr:[58,72]},
+ {st:"asleep",cls:"",resp:[12,15],hr:[55,68]},
+ {st:"asleep",cls:"",resp:[14,17],hr:[60,71]},
+ {st:"awake",cls:"is-watch",resp:[16,19],hr:[70,80]},
+ {st:"restless",cls:"is-watch",resp:[19,22],hr:[78,88]}
+];
+const p2=n=>("0"+n).slice(-2);
+let seed=7;
+function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+function pick(a,b){return Math.round(a+rnd()*(b-a));}
+function mmss(){return (rnd()<0.3?0:1)+":"+p2(pick(0,59));}
+
+function makeBeds(rooms){
+  const out=[];
+  rooms.forEach(([no,n])=>{
+    for(let i=1;i<=n;i++){
+      const s=STATES[Math.floor(rnd()*STATES.length)];
+      if(rnd()<0.11){out.push({id:no+"-B"+i,room:String(no),bed:"B"+i,st:"vacant",short:"VACANT",
+        cls:"",vacant:true,resp:null,hr:null,turn:"—",flat:true});continue;}
+      out.push({id:no+"-B"+i,room:String(no),bed:"B"+i,st:s.st,cls:s.cls,
+        resp:pick(s.resp[0],s.resp[1]),hr:pick(s.hr[0],s.hr[1]),turn:mmss(),flat:false});
+    }
+  });
+  return out;
+}
+
+const FLOORS=[
+ {id:"L2",name:"Level 2",kind:"ASSISTED LIVING",ks:"ASSISTED",wards:[
+   {id:"2A",name:"Ward 2A",rooms:[[201,2],[202,2],[203,2],[204,2],[205,2]]},
+   {id:"2B",name:"Ward 2B",rooms:[[211,2],[212,2],[213,2],[214,2]]}]},
+ {id:"L3",name:"Level 3",kind:"NURSING CARE",ks:"NURSING",wards:[
+   {id:"3A",name:"Ward 3A",rooms:[[301,2],[302,4],[303,2],[304,2],[305,2]]},
+   {id:"3B",name:"Ward 3B",rooms:[[311,2],[312,4],[313,2],[314,2]]}]},
+ {id:"L4",name:"Level 4",kind:"DEMENTIA &amp; PALLIATIVE",ks:"DEMENTIA",wards:[
+   {id:"4A",name:"Ward 4A",rooms:[[401,2],[402,2],[403,2],[404,2]]},
+   {id:"4B",name:"Ward 4B",rooms:[[411,2],[412,2],[413,2]]}]}
+];
+FLOORS.forEach(f=>f.wards.forEach(w=>{w.floor=f;w.beds=makeBeds(w.rooms);}));
+
+const B=id=>{for(const f of FLOORS)for(const w of f.wards){const b=w.beds.find(x=>x.id===id);if(b)return{b,w,f};}};
+function set(id,o){const r=B(id);if(r)Object.assign(r.b,o);}
+
+set("302-B2",{st:"FALL SUSPECTED",short:"FALL",cls:"is-alert",resp:null,hr:null,turn:"—",flat:true,alert:"fall"});
+set("403-B1",{st:"IMMOBILE 4h 12m",short:"IMMOBILE",cls:"is-alert",resp:11,hr:54,turn:"OVERDUE",flat:false,alert:"immob"});
+set("312-B3",{st:"out of bed",short:"OUT",cls:"is-watch",resp:null,hr:null,turn:"—",flat:true});
+set("213-B2",{st:"sensor offline",short:"OFFLINE",cls:"is-off",resp:null,hr:null,turn:"—",flat:true,offline:true});
+
+const ALERTS=[
+ {id:"302-B2",type:"fall",label:"FALL",title:"Room 302 · Bed 2",sub:"Ward 3A — deep disturbance across all signal paths, then stillness held five seconds",ago:"12s"},
+ {id:"403-B1",type:"immob",label:"IMMOBILE",title:"Room 403 · Bed 1",sub:"Ward 4A — no position change for 4h 12m, reposition cycle overdue",ago:"9m"},
+ {id:"213-B2",type:"sensor",label:"OFFLINE",title:"Room 213 · Bed 2",sub:"Ward 2B — receiver stopped reporting, mains power suspected",ago:"22m"}
+];
+const allBeds=()=>{const o=[];FLOORS.forEach(f=>f.wards.forEach(w=>w.beds.forEach(b=>o.push(b))));return o;};
+const wardAlerts=w=>w.beds.filter(b=>b.cls==="is-alert").length;
+const floorAlerts=f=>f.wards.reduce((n,w)=>n+wardAlerts(w),0);
+
+/* ================= state ================= */
+let route={view:"facility",wardId:null,bedId:null};
+
+/* ================= helpers ================= */
+const val=(x,u)=>x===null?'—':`${x}<s>${u}</s>`;
+function sparkPts(flat,s){
+  if(flat) return "0,11 300,11";
+  let p=[];
+  for(let i=0;i<=40;i++) p.push((i*7.5).toFixed(1)+","+(11+Math.sin((i+s)*0.55)*6.4+Math.sin((i+s)*0.19)*1.5).toFixed(1));
+  return p.join(" ");
+}
+const findWard=id=>{for(const f of FLOORS){const w=f.wards.find(x=>x.id===id);if(w)return w;}};
+
+/* ================= nav ================= */
+function renderNav(){
+  let h=`<div class="sall ${route.view==="facility"?"on":""}" onclick="goFacility()">
+    <span class="sdot ${ALERTS.length?"is-hot":"is-ok"}"></span>Whole facility
+    <span class="n" style="margin-left:auto">${allBeds().length}</span></div>`;
+  FLOORS.forEach(f=>{
+    h+=`<div class="sgroup"><div class="sfloor">${f.name}<em>${f.ks}</em></div>`;
+    f.wards.forEach(w=>{
+      const a=wardAlerts(w);
+      h+=`<div class="sitem ${route.wardId===w.id?"on":""}" onclick="goWard('${w.id}')">
+        <span class="sdot ${a?"is-hot":"is-ok"}"></span>${w.name}
+        <span class="n">${w.beds.length}</span></div>`;
+    });
+    h+=`</div>`;
+  });
+  document.getElementById("snav").innerHTML=h;
+
+  let c=`<div class="chip ${route.view==="facility"?"on":""}" onclick="goFacility()">All${ALERTS.length?'<span class="b"></span>':''}</div>`;
+  FLOORS.forEach(f=>f.wards.forEach(w=>{
+    c+=`<div class="chip ${route.wardId===w.id?"on":""}" onclick="goWard('${w.id}')">${w.name}${wardAlerts(w)?'<span class="b"></span>':''}</div>`;
+  }));
+  document.getElementById("chips").innerHTML=c;
+}
+
+/* ================= views ================= */
+function goFacility(){route={view:"facility",wardId:null,bedId:null};render();}
+function goWard(id){route={view:"ward",wardId:id,bedId:null};render();}
+function goBed(id){const r=B(id);route={view:"bed",wardId:r.w.id,bedId:id};render();}
+
+function facilityView(){
+  const beds=allBeds();
+  const stats=[["BEDS",beds.length,""],["OPEN ALERTS",ALERTS.length,"is-hot"],
+    ["FALSE TONIGHT",0,""],["AVG RESPONSE","42s",""],["OCCUPIED",beds.filter(b=>!b.vacant).length+"/"+beds.length,""],
+    ["REPOSITIONS",76,""]];
+  let h=`<div class="stack">
+    <div class="note"><span class="i">i</span><div><b>Interactive demo.</b> Three floors, six wards, 54 beds replayed from a scripted night. Pick a ward, then tap a bed to replay the sixty seconds around its event.</div></div>
+    <div class="h1">Whole facility<small>02:14, night shift · 5 carers on duty across three floors</small></div>
+    <div class="sum">${stats.map(([k,v,c])=>`<div><i>${k}</i><b class="${c}">${v}</b></div>`).join("")}</div>
+    <div class="card"><h2>OPEN ALERTS · ACROSS ALL FLOORS</h2>
+      ${ALERTS.map(a=>`<div class="arow" onclick="goBed('${a.id}')">
+        <span class="abadge t-${a.type}">${a.label}</span>
+        <div class="aw">${a.title}<span>${a.sub}</span></div>
+        <span class="aago">${a.ago}</span></div>`).join("")}
+    </div>
+    <div class="lab">FLOORS <span>tap a ward to open it</span></div>
+    <div class="floors">`;
+  FLOORS.forEach(f=>{
+    h+=`<div class="fl"><div class="flh"><span class="t">${f.name}</span><span class="k">${f.kind}</span></div>
+      <div class="flsub">${f.wards.length} wards · ${f.wards.reduce((n,w)=>n+w.beds.length,0)} beds · ${floorAlerts(f)||"no"} open alert${floorAlerts(f)===1?"":"s"}</div>`;
+    f.wards.forEach(w=>{
+      const a=wardAlerts(w), pct=Math.round((w.beds.filter(b=>!b.vacant).length/w.beds.length)*100);
+      h+=`<div class="wd ${a?"is-hot":""}" onclick="goWard('${w.id}')">
+        <div class="wdl"><div class="n">${w.name}</div><div class="m">${w.beds.length} beds · ${w.rooms.length} rooms</div></div>
+        <div class="occ"><div class="bar"><div class="fill ${a?"is-hot":""}" style="width:${pct}%"></div></div>
+          <div class="t">${pct}% OCCUPIED</div></div>
+        ${a?`<div class="wdb">${a}</div>`:""}</div>`;
+    });
+    h+=`</div>`;
+  });
+  h+=`</div><div class="foot"><b>Oudifi</b> — ambient care intelligence over existing Wi-Fi.<br>
+    A care-support tool, not a clinical diagnostic device. All figures shown are demo data.</div></div>`;
+  return h;
+}
+
+function bedCard(b,i){
+  const col=b.cls==="is-alert"?"#F2994A":((b.offline||b.vacant)?"#3B4759":"#3FC0B4");
+  const due=(b.turn!=="—"&&(b.turn==="OVERDUE"||b.turn.startsWith("0:")))?' class="is-due"':'';
+  return `<div class="bed ${b.cls} ${b.offline?"is-off":""} ${b.vacant?"is-vac":""}" onclick="goBed('${b.id}')">
+    <div class="bh"><span class="id">${b.room} · ${b.bed}</span><span class="st">${b.short||b.st}</span></div>
+    <div class="bv">
+      <div><i>RESP</i><b>${val(b.resp,'/min')}</b></div>
+      <div><i>HR</i><b>${val(b.hr,'bpm')}</b></div>
+      <div><i>TURN IN</i><b${due}>${b.turn}</b></div>
+    </div>
+    <svg class="spark" viewBox="0 0 300 22" preserveAspectRatio="none">
+      <polyline fill="none" stroke="${col}" stroke-width="1.5" points="${sparkPts(b.flat,i*4)}"/></svg>
+  </div>`;
+}
+
+function wardView(){
+  const w=findWard(route.wardId), a=wardAlerts(w);
+  const al=ALERTS.filter(x=>w.beds.some(b=>b.id===x.id));
+  let h=`<div class="stack">
+    <div class="crumb"><b onclick="goFacility()">Whole facility</b> › ${w.floor.name} › ${w.name}</div>
+    <div class="h1">${w.name}<small>${w.floor.name} · ${w.floor.kind.replace('&amp;','&').toLowerCase()} · ${w.beds.length} beds in ${w.rooms.length} rooms</small></div>`;
+  al.forEach(x=>{h+=`<div class="alertbar" onclick="goBed('${x.id}')">
+    <div class="ring">!</div><div class="body"><div class="tag">${x.label} · ${x.ago} AGO</div>
+    <div class="ttl">${x.title}</div><div class="sub">${x.sub}</div></div><div class="go">›</div></div>`;});
+  const rest=w.beds.filter(b=>b.cls!=="is-alert").length;
+  h+=`<div class="sum">
+      <div><i>BEDS</i><b>${w.beds.length}</b></div>
+      <div><i>OPEN ALERTS</i><b class="${a?"is-hot":""}">${a}</b></div>
+      <div><i>OCCUPIED</i><b>${w.beds.filter(b=>!b.vacant).length}/${w.beds.length}</b></div>
+      <div><i>SENSORS</i><b>${w.beds.filter(b=>!b.offline).length}/${w.beds.length}</b></div>
+    </div>
+    <div class="lab">ALL BEDS <span>tap for detail</span></div>
+    <div class="grid">${w.beds.map(bedCard).join("")}</div>
+    <div class="foot">Detection runs on an on-site unit. Raw signal never leaves the building.</div></div>`;
+  return h;
+}
+
+function bedView(){
+  const {b,w,f}=B(route.bedId);
+  const hot=b.cls==="is-alert", isFall=b.alert==="fall", pc=hot?"is-alert":(b.cls==="is-watch"?"is-watch":"is-ok");
+  const log=hot&&b.alert==="fall"?[
+    ["02:14","is-hot","Fall confirmed","Stillness held 5s after impact — alert raised"],
+    ["02:14","","Candidate opened","Deep disturbance across all signal paths"],
+    ["02:11","","Bed edge motion","Moved to the edge, returned"],
+    ["01:52","is-ok","Reposition logged","Carer T. Lim"]]
+   :hot?[
+    ["02:05","is-hot","Immobility alert","No position change for 4h — reposition overdue"],
+    ["01:20","","Reposition due","Two-hour cycle elapsed"],
+    ["22:02","is-ok","Reposition logged","Carer M. Rahim"],
+    ["21:40","is-ok","Settled for the night","Respiration steady at 11/min"]]
+   :[
+    ["02:09","","Turned in bed","Brief motion, settled after 8s"],
+    ["01:47","is-ok","Reposition logged","Carer T. Lim"],
+    ["00:31","","Restless period","Respiration briefly 19/min for 4m"],
+    ["23:22","is-ok","Settled for the night","Respiration steady"]];
+  return `<div class="stack">
+    <div class="crumb"><b onclick="goFacility()">Whole facility</b> › ${f.name} › <b onclick="goWard('${w.id}')">${w.name}</b> › Room ${b.room}</div>
+    <div><span class="back" onclick="goWard('${w.id}')">← ${w.name}</span></div>
+    <div class="h1">Room ${b.room} · Bed ${b.bed.slice(1)}
+      <small>${w.name} · receiver ${b.offline?"offline since 01:52":"online, last packet 0.2s ago"}</small></div>
+    <div><span class="pill ${pc}">${b.st.toUpperCase()}</span></div>
+    <div class="vt">
+      <div><i>RESPIRATION</i><b>${val(b.resp,'/min')}</b><em>${b.resp===null?'no rhythm detected':'within normal range'}</em></div>
+      <div><i>HEART RATE<span class="beta">ROADMAP</span></i><b>${val(b.hr,'bpm')}</b><em>${b.hr===null?'unavailable':'estimated'}</em></div>
+      <div><i>REPOSITION DUE</i><b>${b.turn}</b><em>${b.turn==="—"?'not applicable':'two-hour cycle'}</em></div>
+      <div><i>PRESENCE</i><b>${b.st.includes("out")?"OUT":"IN BED"}</b><em>${b.st.includes("out")?'left 3m 12s ago':'continuous'}</em></div>
+    </div>
+    <div class="card"><h2>SIGNAL${isFall?" REPLAY":""} · LAST 60 SECONDS</h2>
+      <div class="rp"><button class="btn pri" id="playBtn" onclick="replay()">▶ ${isFall?"Replay event":"Replay window"}</button>
+        <span class="rpt" id="rpTime">−60s → now</span></div>
+      <div class="chartbox"><svg id="chart" viewBox="0 0 600 200" preserveAspectRatio="none"></svg></div>
+      <div class="phlab" id="phLab">${isFall?`
+        <div><b>1 · Ordinary movement</b><span>Only the paths the body crosses wobble. Partial and local.</span></div>
+        <div><b>2 · The fall</b><span>Every path shifts at once. Deep and broad, not sharp.</span></div>
+        <div><b>3 · Stillness holds</b><span>Disturbance stops and stays stopped. The body remains.</span></div>`:`
+        <div class="on"><b>No event in this window</b><span>Four signal paths and their combined disturbance. Steady breathing rhythm, no deep or broad shift.</span></div>`}
+      </div></div>
+    <div class="cols">
+      <div class="card"><h2>ROOM ${b.room} · LIVE POSITION</h2>
+        <div class="fp">${floorplan(b)}
+          <div class="env"><div><i>TEMP</i><b>24.1°</b></div><div><i>HUMIDITY</i><b>52%</b></div>
+            <div><i>OCCUPIED</i><b>${w.rooms.find(r=>String(r[0])===b.room)[1]}/${w.rooms.find(r=>String(r[0])===b.room)[1]}</b></div></div>
+        </div></div>
+      <div class="card"><h2>EVENT LOG</h2><div class="log">${log.map(([t,c,h2,s])=>
+        `<div class="lg ${c}"><time>${t}</time><span class="dot"></span>
+         <div class="tx">${h2}<span>${s}</span></div></div>`).join("")}</div></div>
+    </div>
+    <div class="foot">Detection runs on an on-site unit. Raw signal never leaves the building — only events and readings are stored.</div>
+  </div>`;
+}
+
+function floorplan(b){
+  const w=B(b.id).w, n=w.rooms.find(r=>String(r[0])===b.room)[1];
+  const bw=n===4?42:70, gapX=(288-n*bw)/(n+1);
+  let s=`<svg viewBox="0 0 300 120" style="display:block;width:100%;height:auto">
+    <rect x="6" y="6" width="288" height="108" rx="4" fill="none" stroke="#B9C98E" stroke-width="2.4"/>
+    <line x1="48" y1="114" x2="100" y2="114" stroke="#3FC0B4" stroke-width="3.4"/>
+    <line x1="200" y1="114" x2="252" y2="114" stroke="#3FC0B4" stroke-width="3.4"/>`;
+  for(let i=0;i<n;i++){
+    const x=6+gapX*(i+1)+bw*i, cx=x+bw/2, me=("B"+(i+1))===b.bed;
+    s+=`<rect x="${x.toFixed(1)}" y="26" width="${bw}" height="66" rx="4" fill="#1B2942"/>
+      <text x="${cx.toFixed(1)}" y="104" text-anchor="middle" font-size="9" fill="#5D6D85" font-family="ui-monospace,monospace">B${i+1}</text>`;
+    if(me&&b.cls==="is-alert"){
+      s+=`<circle cx="${cx.toFixed(1)}" cy="80" r="23" fill="none" stroke="#F2994A" stroke-width="1.1" opacity=".3"/>
+        <circle cx="${cx.toFixed(1)}" cy="80" r="14" fill="none" stroke="#F2994A" stroke-width="1.5" opacity=".6"/>
+        <circle cx="${cx.toFixed(1)}" cy="80" r="5.5" fill="#F2994A"/>`;
+    } else if(!b.offline||!me){
+      s+=`<circle cx="${cx.toFixed(1)}" cy="59" r="4" fill="${me?"#E8EEF5":"#3FC0B4"}"/>`;
+    }
+  }
+  return s+`</svg>`;
+}
+
+/* ================= chart ================= */
+const W=600,LANES=[34,74,114,154],FA=372,FB=432,AXIS=176;
+let current=null;
+function drawChart(p){
+  const svg=document.getElementById("chart"); if(!svg) return;
+  const hot=current&&current.cls==="is-alert"&&current.alert==="fall", cut=W*p;
+  let o="";
+  if(hot){
+    o+=`<rect x="${FA}" y="8" width="${FB-FA}" height="162" fill="#F2994A" opacity=".13"/>`;
+    o+=`<line x1="${FA}" y1="8" x2="${FA}" y2="170" stroke="#F2994A" stroke-width="1" opacity=".45" stroke-dasharray="4 4"/>`;
+    o+=`<line x1="${FB}" y1="8" x2="${FB}" y2="170" stroke="#F2994A" stroke-width="1" opacity=".45" stroke-dasharray="4 4"/>`;
+  }
+  LANES.forEach((base,i)=>{
+    const act=i%2===0, pts=[];
+    for(let x=0;x<=cut;x+=5){
+      let y=base;
+      if(!hot) y+= act? Math.sin(x*0.135)*5.5+Math.sin(x*0.039)*1.8 : Math.sin(x*0.088)*1.3;
+      else if(x<FA) y+= act? Math.sin(x*0.135)*7+Math.sin(x*0.039)*2.4 : Math.sin(x*0.088)*1.5;
+      else if(x<FB){const t=(x-FA)/(FB-FA); y+=Math.sin(t*Math.PI*5)*17*(1-t*0.2);}
+      pts.push(x+","+y.toFixed(1));
+    }
+    o+=`<polyline fill="none" stroke="#3FC0B4" stroke-width="1.6" points="${pts.join(" ")}"/>`;
+  });
+  o+=`<line x1="0" y1="${AXIS}" x2="${W}" y2="${AXIS}" stroke="#22384F" stroke-width="1"/>`;
+  const c=[];
+  for(let x=0;x<=cut;x+=5){
+    let d=196;
+    if(!hot) d-=4+Math.sin(x*0.048)*1.6;
+    else if(x<FA) d-=4+Math.sin(x*0.048)*1.6;
+    else if(x<FB) d-=4+((x-FA)/(FB-FA))*20;
+    else d-=24*Math.exp(-(x-FB)/75)+2.5;
+    c.push(x+","+d.toFixed(1));
+  }
+  o+=`<polyline fill="none" stroke="${hot?'#F2994A':'#5D6D85'}" stroke-width="2.2" points="${c.join(" ")}"/>`;
+  if(p<1) o+=`<line x1="${cut}" y1="8" x2="${cut}" y2="196" stroke="#E8EEF5" stroke-width="1" opacity=".45"/>`;
+  svg.innerHTML=o;
+  const ph=document.getElementById("phLab");
+  if(hot&&ph.children.length===3){
+    const c=ph.children;
+    for(let i=0;i<3;i++) c[i].classList.remove("on");
+    if(p>=1) for(let i=0;i<3;i++) c[i].classList.add("on");
+    else if(cut<FA) c[0].classList.add("on");
+    else if(cut<FB) c[1].classList.add("on");
+    else c[2].classList.add("on");
+  }
+}
+let anim=null;
+function replay(){
+  if(anim) cancelAnimationFrame(anim);
+  const btn=document.getElementById("playBtn");
+  btn.disabled=true; btn.textContent="Replaying…";
+  const t0=performance.now(), DUR=4400;
+  (function step(t){
+    const p=Math.min(1,(t-t0)/DUR);
+    drawChart(p);
+    document.getElementById("rpTime").textContent=(-60+Math.round(p*60))+"s";
+    if(p<1) anim=requestAnimationFrame(step);
+    else{btn.disabled=false;btn.textContent="▶ Replay event";
+      document.getElementById("rpTime").textContent="−60s → now";}
+  })(t0);
+}
+
+/* ================= render ================= */
+function render(){
+  renderNav();
+  const v=document.getElementById("view");
+  if(route.view==="facility") v.innerHTML=facilityView();
+  else if(route.view==="ward") v.innerHTML=wardView();
+  else{current=B(route.bedId).b; v.innerHTML=bedView(); drawChart(1);}
+  window.scrollTo(0,0);
+}
+
+let mins=2*60+14;
+setInterval(()=>{mins=(mins+1)%1440;
+  const e=document.getElementById("clk");
+  if(e) e.textContent=p2(Math.floor(mins/60))+":"+p2(mins%60);},20000);
+
+render();
+</script>
+</body>
+</html>
